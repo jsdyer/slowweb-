@@ -1,40 +1,21 @@
-import { cleanLines } from './model.mjs';
-const input = document.querySelector('#input');
-const output = document.querySelector('#output');
-const status = document.querySelector('#status');
-const copy = document.querySelector('#copy');
-function update() {
-  const result = cleanLines(input.value);
-  output.value = result.text;
-  status.textContent = result.count
-    ? `${result.count} unique ${result.count === 1 ? 'line' : 'lines'}. ${result.removed} ${result.removed === 1 ? 'duplicate' : 'duplicates'} removed.`
-    : 'Paste one item per line or restore the example.';
-  copy.disabled = result.count === 0;
+import {transferEstimate} from './model.mjs';
+
+const group = document.getElementById('group');
+const result = document.getElementById('result');
+const rate = document.getElementById('rate');
+const rows = [...document.querySelectorAll('tbody tr[data-group]')];
+
+function render() {
+  let visible = 0;
+  for (const row of rows) {
+    row.hidden = Boolean((group.value && row.dataset.group !== group.value) || (result.value && row.dataset.outcome !== result.value));
+    if (!row.hidden) visible++;
+    const metric = row.querySelector('[data-encoded]');
+    metric.textContent = transferEstimate(metric.dataset.encoded,rate.value);
+  }
+  document.getElementById('rate-label').textContent=rate.value;
+  document.getElementById('summary').textContent = visible ? 'Showing '+visible+' of '+rows.length+' tasks.' : 'No tasks match these filters.';
 }
-input.addEventListener('input', update);
-document.querySelector('#sample').addEventListener('click', () => {
-  input.value = input.defaultValue;
-  update();
-});
-document.querySelector('#clear').addEventListener('click', () => {
-  input.value = '';
-  update();
-  input.focus();
-});
-if (navigator.clipboard && window.isSecureContext) {
-  copy.hidden = false;
-  copy.disabled = true;
-  copy.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(output.value);
-      status.textContent = 'Result copied.';
-    } catch {
-      output.focus();
-      output.select();
-      status.textContent = 'Copy was unavailable. The result is selected so you can copy it manually.';
-    }
-  });
-}
-if (input.value) update();
-// Namespace future preference storage as coolcode:<tool-id>:<key>.
-// Do not persist pasted text or uploads by default.
+for (const select of [group,result,rate]) select.addEventListener('change', render);
+document.getElementById('controls').hidden=false;
+render();

@@ -1,0 +1,176 @@
+[
+  {
+    "id": "alderney-ferry",
+    "name": "Alderney ferry departures",
+    "publisher": "Halifax Next · CoolCode",
+    "group": "Halifax harbour",
+    "url": "https://coolcode.ca/halifaxnext/alderney-ferry.html",
+    "domain": "coolcode.ca",
+    "task": "Find a dated schedule and a departure time for the Alderney ferry to Halifax.",
+    "checks": [
+      {
+        "label": "Dated schedule",
+        "text": "Scheduled departures on [0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "show_match": true
+      },
+      {
+        "label": "A clock time in the published example",
+        "selector": "[aria-label='Published example']",
+        "text": "[0-9]{1,2}:[0-9]{2}",
+        "show_match": true
+      }
+    ],
+    "note": "A saved timetable can answer this task. Its service date belongs to Halifax Next; a successful check does not establish a live sailing."
+  },
+  {
+    "id": "halifax-transit-ferry",
+    "name": "Halifax Transit ferry routes",
+    "publisher": "Halifax Regional Municipality",
+    "group": "Halifax harbour",
+    "url": "https://www.halifax.ca/transportation/halifax-transit/ferry-service",
+    "domain": "halifax.ca",
+    "task": "Find the Alderney and Woodside ferry services on the municipal page.",
+    "checks": [
+      {
+        "label": "Alderney ferry service",
+        "text": "Alderney Ferry"
+      },
+      {
+        "label": "Woodside ferry service",
+        "text": "Woodside Ferry"
+      }
+    ],
+    "note": "This checks whether a reader can identify both services, independent of timetable changes."
+  },
+  {
+    "id": "dartmouth-archive",
+    "name": "Dartmouth ferry landing photographs",
+    "publisher": "Halifax Time Lens · CoolCode",
+    "group": "Halifax harbour",
+    "url": "https://coolcode.ca/halifaxtimelens/records/dartmouth-ferry-landing/",
+    "domain": "coolcode.ca",
+    "task": "Find the dated Dartmouth ferry photographs and their archive links.",
+    "checks": [
+      {
+        "label": "1950s archive description",
+        "text": "1950s"
+      },
+      {
+        "label": "1960s archive description",
+        "text": "1960s"
+      },
+      {
+        "label": "Portland Street photograph",
+        "selector": "a[href*='ID=465']",
+        "text": "Portland Street"
+      },
+      {
+        "label": "Queen Street photograph",
+        "selector": "a[href*='ID=467']",
+        "text": "Queen Street"
+      }
+    ],
+    "note": "The archive links must be visible. This checks the viewpoint page; the linked archive viewers have their own requirements."
+  },
+  {
+    "id": "halifax-map-layers",
+    "name": "Halifax Time Lens map controls",
+    "publisher": "Halifax Time Lens · CoolCode",
+    "group": "Halifax harbour",
+    "url": "https://coolcode.ca/halifaxtimelens/",
+    "domain": "coolcode.ca",
+    "task": "Switch the right-hand map layer to the 2025 satellite scene and read its updated label.",
+    "action": {
+      "select": "#right-year",
+      "value": "satellite"
+    },
+    "checks": [
+      {
+        "label": "Right-hand label changes to the satellite scene",
+        "selector": "#right-label",
+        "text": "2025 satellite image"
+      }
+    ],
+    "note": "This task needs the interactive map control. The separate Dartmouth archive page offers a permanent three-year comparison."
+  },
+  {
+    "id": "chebucto-community-net",
+    "name": "Chebucto Community Net",
+    "publisher": "Chebucto Community Net",
+    "group": "Community networks",
+    "url": "https://www.chebucto.ns.ca/index.shtml",
+    "domain": "chebucto.ns.ca",
+    "task": "Find the community network’s description of dial-up access on its legacy page.",
+    "checks": [
+      {
+        "label": "Community network identified",
+        "text": "Chebucto Community Net"
+      },
+      {
+        "label": "Dial-up access described",
+        "text": "dial[ -]?up"
+      }
+    ],
+    "note": "The visit is to a public website. It does not use a Chebucto access account or dial-up line."
+  },
+  {
+    "id": "vancouver-community-network",
+    "name": "Vancouver Community Network",
+    "publisher": "Vancouver Community Network",
+    "group": "Community networks",
+    "url": "https://www.vcn.bc.ca/",
+    "domain": "vcn.bc.ca",
+    "task": "Locate VCN’s public account sign-up link.",
+    "checks": [
+      {
+        "label": "Visible sign-up link",
+        "selector": "a[href]",
+        "text": "^Sign Up[! ]*$"
+      }
+    ],
+    "note": "The check ends at the public link and does not open or submit an account form. It does not measure VCN’s access network."
+  },
+  {
+    "id": "early-web-project",
+    "name": "The World Wide Web project",
+    "publisher": "W3C historical archive",
+    "group": "Text-first web",
+    "url": "https://www.w3.org/History/19921103-hypertext/hypertext/WWW/TheProject.html",
+    "domain": "w3.org",
+    "task": "Find the preserved project page’s technical-details link.",
+    "checks": [
+      {
+        "label": "Project heading",
+        "selector": "h1",
+        "text": "World Wide Web"
+      },
+      {
+        "label": "Technical details link",
+        "selector": "a[href$='Technical.html']",
+        "text": "Technical"
+      }
+    ],
+    "note": "This is the historical document hosted on the present-day W3C site."
+  },
+  {
+    "id": "npr-text",
+    "name": "NPR text-only news",
+    "publisher": "NPR",
+    "group": "Text-first web",
+    "url": "https://text.npr.org/",
+    "domain": "npr.org",
+    "task": "Find a news headline that links to an article from the text-only front page.",
+    "checks": [
+      {
+        "label": "Text-only version identified",
+        "text": "Text-Only Version"
+      },
+      {
+        "label": "Visible linked article headline",
+        "selector": "li a[href]",
+        "text": ".{12,}"
+      }
+    ],
+    "note": "The headline itself changes. The check looks for an article link on the index and does not assess the full article."
+  }
+]

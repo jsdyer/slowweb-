@@ -1,0 +1,43 @@
+name: Refresh Slow Web observations
+on:
+  schedule:
+    - cron: '17 10 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: slowweb-refresh
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: |
+          python -m pip install -r tests/browser-requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Measure published website tasks
+        run: python scripts/measure.py
+      - run: |
+          python scripts/build.py
+          python -m unittest discover -s tests -v
+          python tests/browser_smoke.py
+      - name: Retain and publish the observed edition
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add data/editions
+          git diff --cached --quiet && exit 0
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Retain dated Slow Web observations'
+          git push origin HEAD:main
+          gh workflow run pages.yml --ref main

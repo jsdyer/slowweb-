@@ -1,74 +1,88 @@
-"""Exercise the built starter at a project subpath in Chromium."""
+"""Test the built Slow Web directory, estimates and usable JS-off interface under a project prefix."""
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+import json
+import os
 from pathlib import Path
-import shutil
 import tempfile
-import sys
 import threading
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "scripts"))
-from build import build
+ROOT=Path(__file__).resolve().parents[1]
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
-    def log_message(self, *args):
+    def log_message(self,*args):
         pass
 
 
 def main():
-    screenshots = ROOT / "browser-checks"
-    screenshots.mkdir(exist_ok=True)
+    shots=ROOT/"browser-checks"
+    shots.mkdir(exist_ok=True)
+    status=json.loads((ROOT/"dist/data/status.json").read_text())
     with tempfile.TemporaryDirectory() as temporary:
-        shutil.copytree(ROOT / "dist", Path(temporary) / "example-tool")
-        example = Path(temporary) / "preset-fixture"
-        example.mkdir()
-        shutil.copytree(ROOT / "web", example / "web")
-        shutil.copytree(ROOT / "examples/common-pages", example / "common-pages")
-        for name in ("tool.json", "README.md"):
-            shutil.copyfile(ROOT / name, example / name)
-        build(example)
-        server = ThreadingHTTPServer(("127.0.0.1", 0), partial(QuietHandler, directory=temporary))
-        threading.Thread(target=server.serve_forever, daemon=True).start()
+        (Path(temporary)/"slowweb").symlink_to(ROOT/"dist",target_is_directory=True)
+        (Path(temporary)/"assets").mkdir()
+        (Path(temporary)/"assets/tool-metrics.js").write_text("")
+        server=ThreadingHTTPServer(("127.0.0.1",0),partial(QuietHandler,directory=temporary))
+        threading.Thread(target=server.serve_forever,daemon=True).start()
+        url=f"http://127.0.0.1:{server.server_port}/slowweb/"
         try:
             with sync_playwright() as p:
-                browser = p.chromium.launch()
-                page = browser.new_page(viewport={"width": 1280, "height": 1000})
-                errors = []
-                page.on("pageerror", lambda error: errors.append(str(error)))
-                page.goto(f"http://127.0.0.1:{server.server_port}/example-tool/")
-                assert page.locator("#input").input_value() == "Halifax\nLangley\nHalifax\nVancouver"
-                assert page.locator("#output").input_value() == "Halifax\nLangley\nVancouver"
-                assert "1 duplicate removed" in page.locator("#status").inner_text()
-                page.locator("#input").fill('<img src=x onerror="alert(1)">\n<img src=x onerror="alert(1)">')
-                assert page.locator("#output").input_value() == '<img src=x onerror="alert(1)">'
-                assert page.locator("img").count() == 0
-                page.locator("#clear").click()
-                assert page.locator("#output").input_value() == ""
-                assert "Paste one item per line" in page.locator("#status").inner_text()
-                page.locator("#sample").click()
-                assert page.locator("#output").input_value() == "Halifax\nLangley\nVancouver"
-                page.screenshot(path=str(screenshots / "desktop.png"), full_page=True)
-                page.set_viewport_size({"width": 390, "height": 844})
-                page.goto(f"http://127.0.0.1:{server.server_port}/example-tool/")
-                assert page.locator("#input").bounding_box()["y"] < 844
-                assert page.locator("#output").input_value() == "Halifax\nLangley\nVancouver"
-                assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
-                page.screenshot(path=str(screenshots / "mobile.png"), full_page=True)
-                page.goto(f"http://127.0.0.1:{server.server_port}/preset-fixture/dist/remove-duplicate-cities/")
-                assert page.locator("#output").input_value() == "Vancouver\nHalifax\nCharlottetown"
-                page.locator("#input").fill("Surrey\nSurrey\nOttawa")
-                assert page.locator("#output").input_value() == "Surrey\nOttawa"
-                page.get_by_role("button", name="Restore example").click()
-                assert page.locator("#output").input_value() == "Vancouver\nHalifax\nCharlottetown"
+                browser=p.chromium.launch(executable_path=os.getenv("CHROMIUM_PATH"))
+                page=browser.new_page(viewport={"width":1280,"height":900})
+                errors=[]
+                page.on("pageerror",lambda error:errors.append(str(error)))
+                page.goto(url)
+                expect(page.locator("tbody tr")).to_have_count(status["page_count"])
+                expect(page.locator("#controls")).to_be_visible()
+                expect(page.locator(".spot")).to_contain_text("Alderney ferry")
+                page.screenshot(path=str(shots/"desktop.png"))
+                page.get_by_label("Collection",exact=True).select_option("Community networks")
+                community={s["id"] for s in json.loads((ROOT/"config/subjects.json").read_text()) if s["group"]=="Community networks"}
+                edition=json.loads(max((ROOT/"data/editions").glob("*.json")).read_text())
+                expect(page.locator("tbody tr:visible")).to_have_count(sum(row["id"] in community for row in edition["results"]))
+                page.get_by_label("Collection",exact=True).select_option("")
+                page.get_by_label("Task outcome").select_option("not-demonstrated")
+                expect(page.locator("tbody tr:visible")).to_have_count(sum(1 for r in json.loads(max((ROOT/"data/editions").glob("*.json")).read_text())["results"] if r["outcome"]=="not-demonstrated"))
+                page.get_by_label("Task outcome").select_option("")
+                page.get_by_label("Assumed line rate").select_option("14.4")
+                expect(page.locator("#rate-label")).to_have_text("14.4")
+                metric=page.locator('td[data-encoded]').first
+                if encoded:=metric.get_attribute("data-encoded"):
+                    assert metric.text_content() == page.evaluate('async ([b,r]) => (await import("./model.mjs")).transferEstimate(b,r)',[encoded,"14.4"])
+                page.set_viewport_size({"width":390,"height":844})
+                page.goto(url)
+                expect(page.locator(".spot")).to_be_visible()
+                box=page.get_by_role("link",name="Read the browser receipt").bounding_box()
+                assert box and box["y"]>=0 and box["y"]+box["height"]<844
+                assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+                page.screenshot(path=str(shots/"mobile.png"))
+                page.get_by_role("link",name="Read the browser receipt").click()
+                expect(page.get_by_role("heading",level=1)).to_have_text("Alderney ferry departures")
+                assert page.locator("link[rel=canonical]").get_attribute("href")=="https://coolcode.ca/slowweb/records/alderney-ferry/"
+                history=page.locator('a[href^="visits/"]').first
+                history.click()
+                expect(page.locator("main")).to_contain_text("What the visit found")
+                expect(page.locator("main")).to_contain_text("Network observations")
+                json_url=page.get_by_role("link",name="Download the dated JSON receipt").get_attribute("href")
+                assert page.request.get(page.evaluate("(href) => new URL(href,location.href).href",json_url)).ok
+                static=browser.new_page(java_script_enabled=False,viewport={"width":390,"height":844})
+                static.goto(url)
+                expect(static.locator("#controls")).to_be_hidden()
+                expect(static.locator("tbody tr")).to_have_count(status["page_count"])
+                static.get_by_role("link",name="Browse results",exact=True).click()
+                static.get_by_role("link",name="Halifax Time Lens map controls",exact=True).click()
+                expect(static.get_by_role("heading",level=1)).to_have_text("Halifax Time Lens map controls")
+                static.get_by_role("link",name="Compare the static Dartmouth ferry photograph task").click()
+                expect(static.locator("main")).to_contain_text("Dartmouth ferry landing photographs")
                 assert not errors, errors
                 browser.close()
-            print("Browser checks passed: project subpath, sample, clear, safe text and mobile layout")
         finally:
             server.shutdown()
+            server.server_close()
+    print("Passed project subpath, filters, observable rate changes, dated JSON links, 390px and JavaScript-off reading.")
 
 
-if __name__ == "__main__":
+if __name__=="__main__":
     main()

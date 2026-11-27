@@ -1,16 +1,44 @@
 {
-  "id": "coolcode-tool-template",
-  "title": "CoolCode Tool Starter",
-  "description": "A browser-only example that trims lines and removes exact duplicates.",
-  "category": "security",
-  "tags": ["text", "lines", "duplicates"],
-  "icon": "scan-search",
-  "url": "/coolcode-tool-template/",
-  "source": "https://github.com/jsdyer/coolcode-tool-template",
+  "id": "slowweb",
+  "title": "Slow Web",
+  "description": "Compare dated browser checks for everyday tasks with JavaScript off, inspect downloaded response data and estimate transfer time at dial-up speeds.",
+  "category": "explorers",
+  "tags": [
+    "low bandwidth",
+    "JavaScript",
+    "dial-up",
+    "Halifax",
+    "community networks",
+    "web performance"
+  ],
+  "icon": "activity",
+  "url": "/slowweb/",
+  "source": "https://github.com/jsdyer/slowweb-",
   "hosting": "project",
   "access": "browser",
   "data_info": {
-    "mode": "local",
-    "detail": "The browser reads the text you paste and compares its lines."
-  }
+    "mode": "snapshot",
+    "cadence": "Weekly",
+    "detail": "Dated Chromium visits test named tasks with JavaScript off and record encoded HTTP response bytes. Transfer times use explicit modelled line rates.",
+    "probes": [
+      {
+        "label": "Web tasks checked",
+        "url": "https://coolcode.ca/slowweb/data/status.json",
+        "path": [
+          "checked_at"
+        ],
+        "count_at": {
+          "path": [
+            "page_count"
+          ],
+          "unit": "pages"
+        }
+      }
+    ]
+  },
+  "result_directory": {
+    "path": "records/",
+    "title": "Website tasks tested with JavaScript off"
+  },
+  "task_label": "Find websites that work without JavaScript"
 }

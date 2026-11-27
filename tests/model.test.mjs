@@ -1,21 +1,12 @@
-import test from 'node:test';
+import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import { cleanLines } from '../web/model.mjs';
-test('trims, removes blanks and preserves first-seen order', () => {
-  assert.deepEqual(cleanLines('  Halifax\nLangley\nHalifax\n\nVancouver  '), {
-    text: 'Halifax\nLangley\nVancouver', count: 3, removed: 1,
-  });
+import {transferEstimate} from '../web/model.mjs';
+
+test('transfer-only estimates use decimal kilobits, preserve zero and suppress missing observations',()=>{
+  assert.equal(transferEstimate(7000,56),'1.0 s');
+  assert.equal(transferEstimate(7000,14.4),'3.9 s');
+  assert.equal(transferEstimate(840000,56),'2.0 min');
+  assert.equal(transferEstimate(0,56),'0.0 s');
+  for (const bytes of [null,undefined,'',-1,'unknown']) assert.equal(transferEstimate(bytes,56),'Unavailable');
+  assert.equal(transferEstimate(7000,0),'Unavailable');
 });
-test('supports Windows and old Mac line endings', () => {
-  assert.equal(cleanLines('a\r\nb\ra').text, 'a\nb');
-});
-test('empty text and whitespace produce an empty result', () => {
-  assert.deepEqual(cleanLines(' \n\t'), { text: '', count: 0, removed: 0 });
-});
-test('preserves case and Unicode', () => {
-  assert.equal(cleanLines('Québec\nquébec\n東京\nQuébec').text, 'Québec\nquébec\n東京');
-});
-test('treats markup as ordinary text', () => {
-  assert.equal(cleanLines('<script>alert(1)</script>\n<script>alert(1)</script>').text, '<script>alert(1)</script>');
-});
-test('rejects non-text input', () => { assert.throws(() => cleanLines(null), TypeError); });
