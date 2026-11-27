@@ -1,0 +1,265 @@
+{
+  "started_at": "2026-11-27T17:30:40Z",
+  "checked_at": "2026-11-27T17:30:46Z",
+  "method": 1,
+  "browser": "Chromium 151.0.7922.34",
+  "access_path": "Direct runner connection",
+  "results": [
+    {
+      "id": "alderney-ferry",
+      "observed_at": "2026-11-27T17:30:42Z",
+      "url": "https://coolcode.ca/halifaxnext/alderney-ferry.html",
+      "domain": "coolcode.ca",
+      "name": "Alderney ferry departures",
+      "task": "Find a dated schedule and a departure time for the Alderney ferry to Halifax.",
+      "outcome": "completed",
+      "http_status": 200,
+      "note": "",
+      "checks": [
+        {
+          "label": "Dated schedule",
+          "found": true,
+          "observed_text": "Scheduled departures on 2026-11-27"
+        },
+        {
+          "label": "A clock time in the published example",
+          "found": true,
+          "observed_text": "06:30"
+        }
+      ],
+      "network": {
+        "encoded_bytes": 5542,
+        "requests": 2,
+        "finished": 2,
+        "failed": 0,
+        "pending": 0,
+        "subframes": 0,
+        "outside_hosts": [],
+        "all_observed_responses_finished": true
+      }
+    },
+    {
+      "id": "halifax-transit-ferry",
+      "observed_at": "2026-11-27T17:30:43Z",
+      "url": "https://www.halifax.ca/transportation/halifax-transit/ferry-service",
+      "domain": "halifax.ca",
+      "name": "Halifax Transit ferry routes",
+      "task": "Find the Alderney and Woodside ferry services on the municipal page.",
+      "outcome": "completed",
+      "http_status": 200,
+      "note": "",
+      "checks": [
+        {
+          "label": "Alderney ferry service",
+          "found": true
+        },
+        {
+          "label": "Woodside ferry service",
+          "found": true
+        }
+      ],
+      "network": {
+        "encoded_bytes": 963039,
+        "requests": 98,
+        "finished": 98,
+        "failed": 0,
+        "pending": 0,
+        "subframes": 1,
+        "outside_hosts": [
+          "googleads.g.doubleclick.net",
+          "www.google.com",
+          "www.googleadservices.com",
+          "www.googletagmanager.com"
+        ],
+        "all_observed_responses_finished": false
+      }
+    },
+    {
+      "id": "dartmouth-archive",
+      "observed_at": "2026-11-27T17:30:42Z",
+      "url": "https://coolcode.ca/halifaxtimelens/records/dartmouth-ferry-landing/",
+      "domain": "coolcode.ca",
+      "name": "Dartmouth ferry landing photographs",
+      "task": "Find the dated Dartmouth ferry photographs and their archive links.",
+      "outcome": "completed",
+      "http_status": 200,
+      "note": "",
+      "checks": [
+        {
+          "label": "1950s archive description",
+          "found": true
+        },
+        {
+          "label": "1960s archive description",
+          "found": true
+        },
+        {
+          "label": "Portland Street photograph",
+          "found": true
+        },
+        {
+          "label": "Queen Street photograph",
+          "found": true
+        }
+      ],
+      "network": {
+        "encoded_bytes": 102859,
+        "requests": 5,
+        "finished": 5,
+        "failed": 0,
+        "pending": 0,
+        "subframes": 0,
+        "outside_hosts": [],
+        "all_observed_responses_finished": true
+      }
+    },
+    {
+      "id": "halifax-map-layers",
+      "observed_at": "2026-11-27T17:30:43Z",
+      "url": "https://coolcode.ca/halifaxtimelens/",
+      "domain": "coolcode.ca",
+      "name": "Halifax Time Lens map controls",
+      "task": "Switch the right-hand map layer to the 2025 satellite scene and read its updated label.",
+      "outcome": "not-demonstrated",
+      "http_status": 200,
+      "note": "",
+      "checks": [
+        {
+          "label": "Layer selector available and operable",
+          "found": false
+        },
+        {
+          "label": "Right-hand label changes to the satellite scene",
+          "found": false
+        }
+      ],
+      "network": {
+        "encoded_bytes": 12263,
+        "requests": 3,
+        "finished": 3,
+        "failed": 0,
+        "pending": 0,
+        "subframes": 0,
+        "outside_hosts": [],
+        "all_observed_responses_finished": true
+      }
+    },
+    {
+      "id": "chebucto-community-net",
+      "observed_at": "2026-11-27T17:30:44Z",
+      "url": "https://www.chebucto.ns.ca/index.shtml",
+      "domain": "chebucto.ns.ca",
+      "name": "Chebucto Community Net",
+      "task": "Find the community network’s description of dial-up access on its legacy page.",
+      "outcome": "completed",
+      "http_status": 200,
+      "note": "",
+      "checks": [
+        {
+          "label": "Community network identified",
+          "found": true
+        },
+        {
+          "label": "Dial-up access described",
+          "found": true
+        }
+      ],
+      "network": {
+        "encoded_bytes": 32172,
+        "requests": 8,
+        "finished": 8,
+        "failed": 0,
+        "pending": 0,
+        "subframes": 0,
+        "outside_hosts": [
+          "www.paypalobjects.com"
+        ],
+        "all_observed_responses_finished": true
+      }
+    },
+    {
+      "id": "vancouver-community-network",
+      "observed_at": "2026-11-27T17:30:44Z",
+      "url": "https://www.vcn.bc.ca/",
+      "domain": "vcn.bc.ca",
+      "name": "Vancouver Community Network",
+      "task": "Locate VCN’s public account sign-up link.",
+      "outcome": "unavailable",
+      "http_status": 403,
+      "note": "HTTP 403 from the page.",
+      "checks": [],
+      "network": {
+        "encoded_bytes": 4007,
+        "requests": 2,
+        "finished": 2,
+        "failed": 0,
+        "pending": 0,
+        "subframes": 0,
+        "outside_hosts": [],
+        "all_observed_responses_finished": true
+      }
+    },
+    {
+      "id": "early-web-project",
+      "observed_at": "2026-11-27T17:30:45Z",
+      "url": "https://www.w3.org/History/19921103-hypertext/hypertext/WWW/TheProject.html",
+      "domain": "w3.org",
+      "name": "The World Wide Web project",
+      "task": "Find the preserved project page’s technical-details link.",
+      "outcome": "completed",
+      "http_status": 200,
+      "note": "",
+      "checks": [
+        {
+          "label": "Project heading",
+          "found": true
+        },
+        {
+          "label": "Technical details link",
+          "found": true
+        }
+      ],
+      "network": {
+        "encoded_bytes": 1666,
+        "requests": 1,
+        "finished": 1,
+        "failed": 0,
+        "pending": 0,
+        "subframes": 0,
+        "outside_hosts": [],
+        "all_observed_responses_finished": true
+      }
+    },
+    {
+      "id": "npr-text",
+      "observed_at": "2026-11-27T17:30:46Z",
+      "url": "https://text.npr.org/",
+      "domain": "npr.org",
+      "name": "NPR text-only news",
+      "task": "Find a news headline that links to an article from the text-only front page.",
+      "outcome": "completed",
+      "http_status": 200,
+      "note": "",
+      "checks": [
+        {
+          "label": "Text-only version identified",
+          "found": true
+        },
+        {
+          "label": "Visible linked article headline",
+          "found": true
+        }
+      ],
+      "network": {
+        "encoded_bytes": 2801,
+        "requests": 1,
+        "finished": 1,
+        "failed": 0,
+        "pending": 0,
+        "subframes": 0,
+        "outside_hosts": [],
+        "all_observed_responses_finished": true
+      }
+    }
+  ]
+}
