@@ -13,7 +13,7 @@
   ],
   "icon": "activity",
   "url": "/slowweb/",
-  "source": "https://github.com/jsdyer/slowweb-",
+  "source": "https://github.com/jsdyer/slowweb",
   "hosting": "project",
   "access": "browser",
   "data_info": {
