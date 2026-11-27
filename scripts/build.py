@@ -175,7 +175,9 @@ def build(root=ROOT):
             linkback=a("../../","Compare all tasks")+" · "+a("../","Result directory")
             detail="<p>"+e(subject["note"])+"</p>" if subject.get("note") else ""
             links=""
-            if sid in ("chebucto-community-net","vancouver-community-network"):
+            if sid=="alderney-ferry":
+                links="<p>"+a("https://coolcode.ca/field-notes/reading-the-alderney-ferry-timetable/","Field note: reading the Alderney ferry timetable with JavaScript off")+".</p>"
+            elif sid in ("chebucto-community-net","vancouver-community-network"):
                 links="<p>"+a("https://coolcode.ca/freenet-echo/","Read the dated community network history in FreeNet Echo")+".</p>"
             elif sid=="halifax-map-layers" and "dartmouth-archive" in histories:
                 links="<p>"+a("../dartmouth-archive/","Compare the static Dartmouth ferry photograph task")+".</p>"
